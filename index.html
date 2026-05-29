@@ -381,6 +381,7 @@
     color: var(--muted);
     margin-bottom: 6px;
   }
+  .cal-mobile-weekday { display: none; }
   .cal-today-num { color: var(--accent); font-weight: 700; }
   .cal-event-pill {
     font-size: 16px;
@@ -517,9 +518,6 @@
   .cal-event-pill.multi-day { box-shadow: inset 3px 0 0 rgba(255,255,255,.55); }
   .cal-event-pill.range-middle,
   .cal-event-pill.range-end { opacity: .72; }
-  .cal-event-pill.multi-day { box-shadow: inset 3px 0 0 rgba(255,255,255,.55); }
-  .cal-event-pill.range-middle,
-  .cal-event-pill.range-end { opacity: .72; }
 
   /* ─── Mobile bottom nav ─── */
   .mobile-nav {
@@ -653,8 +651,8 @@
       flex-shrink: 0;
     }
 
-    .desktop-pills { display: none; }
-    .mobile-pills { display: flex; flex-direction: column; gap: 4px; }
+    .cal-cell-events.desktop-pills { display: none; }
+    .cal-cell-events.mobile-pills { display: flex; flex-direction: column; gap: 4px; }
 
     /* Calendar on mobile: single-column list instead of grid */
     .cal-grid {
@@ -674,10 +672,18 @@
     .cal-cell.empty { display: none; }
     .cal-day-num {
       font-size: 15px;
-      width: 32px;
+      width: 58px;
       flex-shrink: 0;
       padding-top: 2px;
       margin-bottom: 0;
+      font-family: 'Noto Sans TC', sans-serif;
+      font-weight: 500;
+    }
+    .cal-mobile-weekday {
+      display: inline;
+      margin-left: 2px;
+      font-size: 12px;
+      color: var(--muted);
     }
     .cal-cell-events { flex: 1; display: flex; flex-direction: column; gap: 4px; }
     .cal-event-pill {
@@ -1458,7 +1464,7 @@ function renderCalendar() {
           }).join('');
           const more = dayEvs.length > MAX_MOBILE ? `<div class="cal-more" onclick="showDayPopup('${dateStr}')" style="cursor:pointer;color:var(--accent);font-weight:600">+${dayEvs.length-MAX_MOBILE} 更多</div>` : '';
           return `<div class="cal-cell ${isToday?'today':''}">
-            <div class="cal-day-num ${isToday?'cal-today-num':''}">${d}</div>
+            <div class="cal-day-num ${isToday?'cal-today-num':''}">${d}<span class="cal-mobile-weekday">（${WEEKDAYS[dt.getDay()]}）</span></div>
             <div class="cal-cell-events desktop-pills">${pills}</div>
             <div class="cal-cell-events mobile-pills">${pillsMobile}${more}</div>
           </div>`;
