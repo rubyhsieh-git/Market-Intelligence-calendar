@@ -382,6 +382,7 @@
     margin-bottom: 6px;
   }
   .cal-today-num { color: var(--accent); font-weight: 700; }
+  .cal-mobile-weekday { display: none; }
   .cal-event-pill {
     font-size: 16px;
     padding: 4px 8px;
@@ -653,8 +654,8 @@
       flex-shrink: 0;
     }
 
-    .desktop-pills { display: none; }
-    .mobile-pills { display: flex; flex-direction: column; gap: 4px; }
+    .cal-cell-events.desktop-pills { display: none !important; }
+    .cal-cell-events.mobile-pills { display: flex !important; flex-direction: column; gap: 4px; }
 
     /* Calendar on mobile: single-column list instead of grid */
     .cal-grid {
@@ -678,6 +679,12 @@
       flex-shrink: 0;
       padding-top: 2px;
       margin-bottom: 0;
+    }
+    .cal-mobile-weekday {
+      display: inline;
+      margin-left: 2px;
+      font-size: 12px;
+      color: var(--muted);
     }
     .cal-cell-events { flex: 1; display: flex; flex-direction: column; gap: 4px; }
     .cal-event-pill {
@@ -753,8 +760,9 @@
     <h1>外部商情重要 TA</h1>
   </div>
   <div class="header-actions">
-    <span id="eventCount" style="font-size:13px;color:var(--muted);font-family:'Space Mono',monospace;">147 個事件</span>
-    <button class="btn btn-ghost" onclick="saveAsHTML()" title="將資料存入 HTML 檔案下載">💾 存檔</button>
+    <span id="eventCount" style="font-size:13px;color:var(--muted);font-family:'Space Mono',monospace;">196 個事件</span>
+    <span id="syncStatus" style="font-size:12px;color:var(--muted);">本機資料</span>
+    <button class="btn btn-ghost" onclick="syncToServer(true)" title="同步寫入 events.json">💾 同步</button>
     <button class="btn btn-primary" onclick="openModal()">＋ 新增事件</button>
   </div>
 </header>
@@ -770,31 +778,31 @@
       <div class="stat-dot bg-eco"></div>
       <div>
         <div class="stat-label">📊 重要經濟數據</div>
-        <div class="stat-count c-eco">119</div>
+        <div class="stat-count c-eco">152</div>
       </div>
     </div><div class="stat-item">
       <div class="stat-dot bg-client"></div>
       <div>
         <div class="stat-label">📁 客戶/品牌相關</div>
-        <div class="stat-count c-client">3</div>
+        <div class="stat-count c-client">15</div>
       </div>
     </div><div class="stat-item">
       <div class="stat-dot bg-peer"></div>
       <div>
         <div class="stat-label">📈 同業相關</div>
-        <div class="stat-count c-peer">13</div>
+        <div class="stat-count c-peer">9</div>
       </div>
     </div><div class="stat-item">
       <div class="stat-dot bg-supply"></div>
       <div>
         <div class="stat-label">🌐 供應鏈相關</div>
-        <div class="stat-count c-supply">3</div>
+        <div class="stat-count c-supply">5</div>
       </div>
     </div><div class="stat-item">
       <div class="stat-dot bg-other"></div>
       <div>
         <div class="stat-label">📌 其他</div>
-        <div class="stat-count c-other">0</div>
+        <div class="stat-count c-other">6</div>
       </div>
     </div></div>
 
@@ -829,23 +837,23 @@
     </label><label class="cat-filter-item active" onclick="toggleCat('重要經濟數據')">
       <div class="cat-dot bg-eco"></div>
       <span class="cat-name">📊 重要經濟數據</span>
-      <span class="cat-badge">119</span>
+      <span class="cat-badge">152</span>
     </label><label class="cat-filter-item active" onclick="toggleCat('客戶/品牌相關')">
       <div class="cat-dot bg-client"></div>
       <span class="cat-name">📁 客戶/品牌相關</span>
-      <span class="cat-badge">3</span>
+      <span class="cat-badge">15</span>
     </label><label class="cat-filter-item active" onclick="toggleCat('同業相關')">
       <div class="cat-dot bg-peer"></div>
       <span class="cat-name">📈 同業相關</span>
-      <span class="cat-badge">13</span>
+      <span class="cat-badge">9</span>
     </label><label class="cat-filter-item active" onclick="toggleCat('供應鏈相關')">
       <div class="cat-dot bg-supply"></div>
       <span class="cat-name">🌐 供應鏈相關</span>
-      <span class="cat-badge">3</span>
+      <span class="cat-badge">5</span>
     </label><label class="cat-filter-item active" onclick="toggleCat('其他')">
       <div class="cat-dot bg-other"></div>
       <span class="cat-name">📌 其他</span>
-      <span class="cat-badge">0</span>
+      <span class="cat-badge">6</span>
     </label></div>
     </div>
 
@@ -858,29 +866,29 @@
 
   <!-- Content -->
   <main class="content" id="contentArea"><div class="calendar-view"><div class="cal-month">
-      <div class="cal-month-title">2026年6月 <span class="month-count">12 件</span></div>
+      <div class="cal-month-title">2026年6月 <span class="month-count">17 件</span></div>
       <div class="cal-grid">
         <div class="cal-header">日</div><div class="cal-header">一</div><div class="cal-header">二</div><div class="cal-header">三</div><div class="cal-header">四</div><div class="cal-header">五</div><div class="cal-header">六</div>
         <div class="cal-cell empty"></div><div class="cal-cell ">
             <div class="cal-day-num ">1</div>
-            <div class="cal-cell-events desktop-pills"></div>
-            <div class="cal-cell-events mobile-pills"></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,100)" title="歐洲4月失業率">歐洲4月失業率</div><div class="cal-event-pill bg-other multi-day range-start" onclick="showEventMenu(event,103)" title="台北國際電腦展COMPUTEX（6/1~6/4）">台北國際電腦展COMPUTEX</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,100)" style="opacity:.85;color:#fff" title="歐洲4月失業率">歐洲4月失業率</div><div class="cal-event-pill bg-other multi-day range-start" onclick="showEventMenu(event,103)" style="opacity:.85;color:#fff" title="台北國際電腦展COMPUTEX（6/1~6/4）">台北國際電腦展COMPUTEX</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">2</div>
-            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,148)" title="測試">測試</div></div>
-            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" style="opacity:.85;color:#fff" title="測試">測試</div></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-other multi-day range-middle" onclick="showEventMenu(event,103)" title="台北國際電腦展COMPUTEX（6/1~6/4）">續：台北國際電腦展COMPUTEX</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-other multi-day range-middle" onclick="showEventMenu(event,103)" style="opacity:.85;color:#fff" title="台北國際電腦展COMPUTEX（6/1~6/4）">續：台北國際電腦展COMPUTEX</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">3</div>
-            <div class="cal-cell-events desktop-pills"></div>
-            <div class="cal-cell-events mobile-pills"></div>
-          </div><div class="cal-cell ">
-            <div class="cal-day-num ">4</div>
-            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,75)" title="歐洲4月零售">歐洲4月零售</div><div class="cal-event-pill bg-client" onclick="showEventMenu(event,147)" title="Lululemon 26'Q1財報">Lululemon 26'Q1財報</div></div>
-            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" style="opacity:.85;color:#fff" title="歐洲4月零售">歐洲4月零售</div><div class="cal-event-pill bg-client" style="opacity:.85;color:#fff" title="Lululemon 26'Q1財報">Lululemon 26'Q1財報</div></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-other multi-day range-middle" onclick="showEventMenu(event,103)" title="台北國際電腦展COMPUTEX（6/1~6/4）">續：台北國際電腦展COMPUTEX</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-other multi-day range-middle" onclick="showEventMenu(event,103)" style="opacity:.85;color:#fff" title="台北國際電腦展COMPUTEX（6/1~6/4）">續：台北國際電腦展COMPUTEX</div></div>
+          </div><div class="cal-cell today">
+            <div class="cal-day-num cal-today-num">4</div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-other multi-day range-end" onclick="showEventMenu(event,103)" title="台北國際電腦展COMPUTEX（6/1~6/4）">續：台北國際電腦展COMPUTEX</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,101)" title="歐洲4月零售">歐洲4月零售</div><div class="cal-event-pill bg-client" onclick="showEventMenu(event,196)" title="Lululemon 26'Q1財報">Lululemon 26'Q1財報</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-other multi-day range-end" onclick="showEventMenu(event,103)" style="opacity:.85;color:#fff" title="台北國際電腦展COMPUTEX（6/1~6/4）">續：台北國際電腦展COMPUTEX</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,101)" style="opacity:.85;color:#fff" title="歐洲4月零售">歐洲4月零售</div><div class="cal-event-pill bg-client" onclick="showEventMenu(event,196)" style="opacity:.85;color:#fff" title="Lululemon 26'Q1財報">Lululemon 26'Q1財報</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">5</div>
-            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,76)" title="美國5月非農/失業率">美國5月非農/失業率</div></div>
-            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" style="opacity:.85;color:#fff" title="美國5月非農/失業率">美國5月非農/失業率</div></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,102)" title="美國5月非農/失業率">美國5月非農/失業率</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,102)" style="opacity:.85;color:#fff" title="美國5月非農/失業率">美國5月非農/失業率</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">6</div>
             <div class="cal-cell-events desktop-pills"></div>
@@ -899,44 +907,44 @@
             <div class="cal-cell-events mobile-pills"></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">10</div>
-            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,77)" title="美國5月CPI">美國5月CPI</div></div>
-            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" style="opacity:.85;color:#fff" title="美國5月CPI">美國5月CPI</div></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,104)" title="美國5月CPI">美國5月CPI</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,104)" style="opacity:.85;color:#fff" title="美國5月CPI">美國5月CPI</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">11</div>
             <div class="cal-cell-events desktop-pills"></div>
             <div class="cal-cell-events mobile-pills"></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">12</div>
-            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,78)" title="美國6月消費信心(密大)">美國6月消費信心(密大)</div></div>
-            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" style="opacity:.85;color:#fff" title="美國6月消費信心(密大)">美國6月消費信心(密大)</div></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,105)" title="美國6月消費信心(密大)">美國6月消費信心(密大)</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,105)" style="opacity:.85;color:#fff" title="美國6月消費信心(密大)">美國6月消費信心(密大)</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">13</div>
             <div class="cal-cell-events desktop-pills"></div>
             <div class="cal-cell-events mobile-pills"></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">14</div>
-            <div class="cal-cell-events desktop-pills"></div>
-            <div class="cal-cell-events mobile-pills"></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-other multi-day range-start" onclick="showEventMenu(event,110)" title="G7高峰會（6/14~6/16）">G7高峰會</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-other multi-day range-start" onclick="showEventMenu(event,110)" style="opacity:.85;color:#fff" title="G7高峰會（6/14~6/16）">G7高峰會</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">15</div>
-            <div class="cal-cell-events desktop-pills"></div>
-            <div class="cal-cell-events mobile-pills"></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-other multi-day range-middle" onclick="showEventMenu(event,110)" title="G7高峰會（6/14~6/16）">續：G7高峰會</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-other multi-day range-middle" onclick="showEventMenu(event,110)" style="opacity:.85;color:#fff" title="G7高峰會（6/14~6/16）">續：G7高峰會</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">16</div>
-            <div class="cal-cell-events desktop-pills"></div>
-            <div class="cal-cell-events mobile-pills"></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-other multi-day range-end" onclick="showEventMenu(event,110)" title="G7高峰會（6/14~6/16）">續：G7高峰會</div><div class="cal-event-pill bg-fed multi-day range-start" onclick="showEventMenu(event,106)" title="聯準會利率會議（6/16~6/17）">聯準會利率會議</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-other multi-day range-end" onclick="showEventMenu(event,110)" style="opacity:.85;color:#fff" title="G7高峰會（6/14~6/16）">續：G7高峰會</div><div class="cal-event-pill bg-fed multi-day range-start" onclick="showEventMenu(event,106)" style="opacity:.85;color:#fff" title="聯準會利率會議（6/16~6/17）">聯準會利率會議</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">17</div>
-            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-fed" onclick="showEventMenu(event,79)" title="聯準會利率會議">聯準會利率會議</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,81)" title="美國5月零售">美國5月零售</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,82)" title="歐洲5月CPI">歐洲5月CPI</div><div class="cal-event-pill bg-peer" onclick="showEventMenu(event,83)" title="廣越股東會">廣越股東會</div></div>
-            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-fed" style="opacity:.85;color:#fff" title="聯準會利率會議">聯準會利率會議</div><div class="cal-event-pill bg-eco" style="opacity:.85;color:#fff" title="美國5月零售">美國5月零售</div><div class="cal-event-pill bg-eco" style="opacity:.85;color:#fff" title="歐洲5月CPI">歐洲5月CPI</div><div class="cal-more" onclick="showDayPopup('2026-06-17')" style="cursor:pointer;color:var(--accent);font-weight:600">+1 更多</div></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-fed multi-day range-end" onclick="showEventMenu(event,106)" title="聯準會利率會議（6/16~6/17）">續：聯準會利率會議</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,108)" title="美國5月零售">美國5月零售</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,109)" title="歐洲5月CPI">歐洲5月CPI</div><div class="cal-event-pill bg-peer" onclick="showEventMenu(event,111)" title="廣越股東會">廣越股東會</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-fed multi-day range-end" onclick="showEventMenu(event,106)" style="opacity:.85;color:#fff" title="聯準會利率會議（6/16~6/17）">續：聯準會利率會議</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,108)" style="opacity:.85;color:#fff" title="美國5月零售">美國5月零售</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,109)" style="opacity:.85;color:#fff" title="歐洲5月CPI">歐洲5月CPI</div><div class="cal-more" onclick="showDayPopup('2026-06-17')" style="cursor:pointer;color:var(--accent);font-weight:600">+1 更多</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">18</div>
             <div class="cal-cell-events desktop-pills"></div>
             <div class="cal-cell-events mobile-pills"></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">19</div>
-            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,80)" title="日本5月CPI">日本5月CPI</div></div>
-            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" style="opacity:.85;color:#fff" title="日本5月CPI">日本5月CPI</div></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,107)" title="日本5月CPI">日本5月CPI</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,107)" style="opacity:.85;color:#fff" title="日本5月CPI">日本5月CPI</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">20</div>
             <div class="cal-cell-events desktop-pills"></div>
@@ -959,8 +967,8 @@
             <div class="cal-cell-events mobile-pills"></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">25</div>
-            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,84)" title="美國5月PCE">美國5月PCE</div></div>
-            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" style="opacity:.85;color:#fff" title="美國5月PCE">美國5月PCE</div></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,112)" title="美國5月PCE">美國5月PCE</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,112)" style="opacity:.85;color:#fff" title="美國5月PCE">美國5月PCE</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">26</div>
             <div class="cal-cell-events desktop-pills"></div>
@@ -975,12 +983,12 @@
             <div class="cal-cell-events mobile-pills"></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">29</div>
-            <div class="cal-cell-events desktop-pills"></div>
-            <div class="cal-cell-events mobile-pills"></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,113)" title="日本5月零售">日本5月零售</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,113)" style="opacity:.85;color:#fff" title="日本5月零售">日本5月零售</div></div>
           </div><div class="cal-cell ">
             <div class="cal-day-num ">30</div>
-            <div class="cal-cell-events desktop-pills"></div>
-            <div class="cal-cell-events mobile-pills"></div>
+            <div class="cal-cell-events desktop-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,114)" title="美國6月消費信心(CB)">美國6月消費信心(CB)</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,117)" title="日本5月失業率">日本5月失業率</div></div>
+            <div class="cal-cell-events mobile-pills"><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,114)" style="opacity:.85;color:#fff" title="美國6月消費信心(CB)">美國6月消費信心(CB)</div><div class="cal-event-pill bg-eco" onclick="showEventMenu(event,117)" style="opacity:.85;color:#fff" title="日本5月失業率">日本5月失業率</div></div>
           </div><div class="cal-cell empty"></div><div class="cal-cell empty"></div><div class="cal-cell empty"></div><div class="cal-cell empty"></div>
       </div>
     </div></div></main>
@@ -989,17 +997,17 @@
 <!-- Mobile bottom nav -->
 <nav class="mobile-nav">
   <div class="mobile-nav-inner">
-    <button class="mobile-nav-btn active" id="mnavTimeline" onclick="mobileSetView('timeline')">
+    <button class="mobile-nav-btn" id="mnavTimeline" onclick="mobileSetView('timeline')">
       <span class="icon">📋</span>時間軸
     </button>
-    <button class="mobile-nav-btn" id="mnavCalendar" onclick="mobileSetView('calendar')">
+    <button class="mobile-nav-btn active" id="mnavCalendar" onclick="mobileSetView('calendar')">
       <span class="icon">📅</span>月曆
     </button>
     <button class="mobile-nav-btn" onclick="openModal()">
       <span class="icon">＋</span>新增
     </button>
-    <button class="mobile-nav-btn" onclick="saveAsHTML()">
-      <span class="icon">💾</span>存檔
+    <button class="mobile-nav-btn" onclick="syncToServer(true)">
+      <span class="icon">💾</span>同步
     </button>
     <button class="mobile-nav-btn" id="mnavFilter" onclick="openFilterDrawer()">
       <span class="icon">⚙️</span>篩選
@@ -1032,10 +1040,10 @@
 </div>
 
 <!-- Confirm dialog -->
-<div class="modal-overlay" id="confirmOverlay" style="display:none">
+<div class="modal-overlay" id="confirmOverlay" style="display: none;">
   <div class="modal" style="max-width:320px;text-align:center">
     <div style="font-size:32px;margin-bottom:12px">🗑️</div>
-    <div id="confirmMsg" style="font-size:15px;font-weight:500;margin-bottom:24px">確定要刪除？</div>
+    <div id="confirmMsg" style="font-size:15px;font-weight:500;margin-bottom:24px">確定要刪除此事件？</div>
     <div style="display:flex;gap:8px;justify-content:center">
       <button class="btn btn-ghost" onclick="closeConfirm(false)" style="flex:1">取消</button>
       <button class="btn" onclick="closeConfirm(true)" style="flex:1;background:#ef4444;color:#fff">刪除</button>
@@ -1044,10 +1052,10 @@
 </div>
 
 <!-- Cal event context menu -->
-<div id="calEventMenu" style="display:none;position:fixed;z-index:300;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.12);overflow:hidden;min-width:140px">
-  <button onclick="menuEdit()" style="display:flex;align-items:center;gap:8px;width:100%;padding:11px 16px;background:none;border:none;cursor:pointer;font-size:14px;font-family:'Noto Sans TC',sans-serif;color:var(--text);transition:background .1s" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='none'">✎ 編輯</button>
+<div id="calEventMenu" style="display: none; position: fixed; z-index: 300; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: rgba(0, 0, 0, 0.12) 0px 4px 20px; overflow: hidden; min-width: 140px; left: 1339px; top: 379px;">
+  <button onclick="menuEdit()" style="display: flex; align-items: center; gap: 8px; width: 100%; padding: 11px 16px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-size: 14px; font-family: &quot;Noto Sans TC&quot;, sans-serif; color: var(--text); transition: background 0.1s;" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='none'">✎ 編輯</button>
   <div style="height:1px;background:var(--border)"></div>
-  <button onclick="menuDelete()" style="display:flex;align-items:center;gap:8px;width:100%;padding:11px 16px;background:none;border:none;cursor:pointer;font-size:14px;font-family:'Noto Sans TC',sans-serif;color:#ef4444;transition:background .1s" onmouseover="this.style.background='#fff1f1'" onmouseout="this.style.background='none'">✕ 刪除</button>
+  <button onclick="menuDelete()" style="display: flex; align-items: center; gap: 8px; width: 100%; padding: 11px 16px; background: none; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; cursor: pointer; font-size: 14px; font-family: &quot;Noto Sans TC&quot;, sans-serif; color: rgb(239, 68, 68); transition: background 0.1s;" onmouseover="this.style.background='#fff1f1'" onmouseout="this.style.background='none'">✕ 刪除</button>
 </div>
 
 <!-- Day popup -->
@@ -1115,7 +1123,7 @@ const CAT_MAP = {
   '其他': { cls: 'other', emoji: '📌' },
 };
 
-const SEED_EVENTS = [{"id":1,"date":"2026-01-08","event":"歐洲11月失業率","category":"重要經濟數據"},{"id":2,"date":"2026-01-09","event":"美國12月非農/失業率","category":"重要經濟數據"},{"id":3,"date":"2026-01-08","event":"日本12月消費信心","category":"重要經濟數據"},{"id":4,"date":"2026-01-09","event":"美國1月消費信心(密大)","category":"重要經濟數據"},{"id":5,"date":"2026-01-09","event":"歐洲11月零售","category":"重要經濟數據"},{"id":6,"date":"2026-01-13","event":"美國12月CPI","category":"重要經濟數據"},{"id":7,"date":"2026-01-14","event":"美國11月零售","category":"重要經濟數據"},{"id":8,"date":"2026-01-19","event":"歐洲12月CPI","category":"重要經濟數據"},{"id":9,"date":"2026-01-23","event":"日本12月CPI","category":"重要經濟數據"},{"id":10,"date":"2026-01-19","event":"世界經濟論壇","category":"其他","endDate":"2026-01-23"},{"id":11,"date":"2026-01-27","event":"美國1月消費信心(CB)","category":"重要經濟數據"},{"id":12,"date":"2026-01-29","event":"日本1月消費信心","category":"重要經濟數據"},{"id":13,"date":"2026-01-30","event":"日本12月零售","category":"重要經濟數據"},{"id":14,"date":"2026-01-27","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-01-28"},{"id":15,"date":"2026-01-30","event":"日本12月失業率","category":"重要經濟數據"},{"id":16,"date":"2026-01-30","event":"歐洲12月失業率","category":"重要經濟數據"},{"id":17,"date":"2026-02-06","event":"美國1月非農/失業率","category":"重要經濟數據"},{"id":18,"date":"2026-02-05","event":"歐洲12月零售","category":"重要經濟數據"},{"id":19,"date":"2026-02-06","event":"美國2月消費信心(密大)","category":"重要經濟數據"},{"id":20,"date":"2026-02-11","event":"美國1月非農","category":"重要經濟數據"},{"id":21,"date":"2026-02-12","event":"孟加拉大選","category":"供應鏈相關"},{"id":22,"date":"2026-02-13","event":"美國1月CPI","category":"重要經濟數據"},{"id":23,"date":"2026-02-18","event":"聯準會會議記錄","category":"聯準會動態"},{"id":24,"date":"2026-02-19","event":"WMT Q4財報","category":"客戶/品牌相關"},{"id":25,"date":"2026-02-20","event":"日本1月CPI","category":"重要經濟數據"},{"id":26,"date":"2026-02-20","event":"美國Q4 GDP(初值)","category":"重要經濟數據"},{"id":27,"date":"2026-02-20","event":"美最高法院開庭","category":"供應鏈相關"},{"id":28,"date":"2026-02-24","event":"停止徵收對等關稅，暫時性10%關稅生效","category":"供應鏈相關"},{"id":29,"date":"2026-02-24","event":"美國2月消費信心(CB)","category":"重要經濟數據"},{"id":30,"date":"2026-02-25","event":"歐洲1月CPI","category":"重要經濟數據"},{"id":31,"date":"2026-02-26","event":"美國1月PCE","category":"重要經濟數據"},{"id":32,"date":"2026-02-27","event":"日本1月零售","category":"重要經濟數據"},{"id":33,"date":"2026-03-03","event":"日本1月失業率","category":"重要經濟數據"},{"id":34,"date":"2026-03-04","event":"日本2月消費信心","category":"重要經濟數據"},{"id":35,"date":"2026-03-05","event":"歐洲1月零售","category":"重要經濟數據"},{"id":36,"date":"2026-03-06","event":"美國2月非農/失業率","category":"重要經濟數據"},{"id":37,"date":"2026-03-03","event":"Target Q4財報","category":"客戶/品牌相關"},{"id":38,"date":"2026-03-04","event":"歐洲1月失業率","category":"重要經濟數據"},{"id":39,"date":"2026-03-05","event":"GAP inc. Q4財報","category":"客戶/品牌相關"},{"id":40,"date":"2026-03-06","event":"美國1月零售","category":"重要經濟數據"},{"id":41,"date":"2026-03-04","event":"A&F Q4財報","category":"客戶/品牌相關"},{"id":42,"date":"2026-03-05","event":"Costco Q4財報","category":"客戶/品牌相關"},{"id":43,"date":"2026-03-10","event":"Kohl's Q4財報","category":"客戶/品牌相關"},{"id":44,"date":"2026-03-11","event":"美國2月CPI","category":"重要經濟數據"},{"id":45,"date":"2026-03-12","event":"Dick's Q4財報","category":"客戶/品牌相關"},{"id":46,"date":"2026-03-13","event":"美國3月消費信心(密大)","category":"重要經濟數據"},{"id":47,"date":"2026-03-10","event":"廣越 2025年財報","category":"同業相關"},{"id":48,"date":"2026-03-11","event":"Inditex Q4財報","category":"客戶/品牌相關"},{"id":49,"date":"2026-03-17","event":"儒鴻法說會","category":"同業相關"},{"id":50,"date":"2026-03-18","event":"歐洲2月CPI","category":"重要經濟數據"},{"id":51,"date":"2026-03-17","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-03-18"},{"id":52,"date":"2026-03-24","event":"日本2月CPI","category":"重要經濟數據"},{"id":53,"date":"2026-03-24","event":"博鰲亞洲論壇","category":"其他","endDate":"2026-03-27"},{"id":54,"date":"2026-03-31","event":"美國3月消費信心(CB)","category":"重要經濟數據"},{"id":55,"date":"2026-04-01","event":"美國2月零售","category":"重要經濟數據"},{"id":56,"date":"2026-04-03","event":"美國3月非農/失業率","category":"重要經濟數據"},{"id":57,"date":"2026-03-31","event":"日本2月失業率","category":"重要經濟數據"},{"id":58,"date":"2026-04-01","event":"歐洲2月失業率","category":"重要經濟數據"},{"id":59,"date":"2026-03-31","event":"日本2月零售","category":"重要經濟數據"},{"id":60,"date":"2026-04-08","event":"歐洲2月零售","category":"重要經濟數據"},{"id":61,"date":"2026-04-09","event":"美國2月PCE","category":"重要經濟數據"},{"id":62,"date":"2026-04-10","event":"美國3月CPI","category":"重要經濟數據"},{"id":63,"date":"2026-04-09","event":"日本3月消費信心","category":"重要經濟數據"},{"id":64,"date":"2026-04-10","event":"美國4月消費信心(密大)","category":"重要經濟數據"},{"id":65,"date":"2026-04-16","event":"歐洲3月CPI","category":"重要經濟數據"},{"id":66,"date":"2026-04-21","event":"美國3月零售","category":"重要經濟數據"},{"id":67,"date":"2026-04-24","event":"日本3月CPI","category":"重要經濟數據"},{"id":68,"date":"2026-04-28","event":"美國4月消費信心(CB)","category":"重要經濟數據"},{"id":69,"date":"2026-04-30","event":"美國3月PCE","category":"重要經濟數據"},{"id":70,"date":"2026-04-28","event":"日本3月失業率","category":"重要經濟數據"},{"id":71,"date":"2026-04-30","event":"日本4月消費信心","category":"重要經濟數據"},{"id":72,"date":"2026-04-28","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-04-29"},{"id":73,"date":"2026-04-30","event":"日本3月零售","category":"重要經濟數據"},{"id":74,"date":"2026-04-30","event":"歐洲3月失業率","category":"重要經濟數據"},{"id":75,"date":"2026-05-07","event":"歐洲3月零售","category":"重要經濟數據"},{"id":76,"date":"2026-05-08","event":"美國4月非農/失業率","category":"重要經濟數據"},{"id":77,"date":"2026-05-07","event":"儒鴻、廣越Q1財報","category":"同業相關"},{"id":78,"date":"2026-05-08","event":"美國5月消費信心(密大)","category":"重要經濟數據"},{"id":79,"date":"2026-05-12","event":"美國4月CPI","category":"重要經濟數據"},{"id":80,"date":"2026-05-14","event":"美國4月零售","category":"重要經濟數據"},{"id":81,"date":"2026-05-12","event":"Gap inc.年度股東大會","category":"同業相關"},{"id":82,"date":"2026-05-13","event":"川習會","category":"供應鏈相關","endDate":"2026-05-15"},{"id":83,"date":"2026-05-12","event":"廣越Q1法說會","category":"同業相關"},{"id":84,"date":"2026-05-19","event":"儒鴻Q1法說會","category":"同業相關"},{"id":85,"date":"2026-05-20","event":"TGT 26'Q1財報","category":"客戶/品牌相關"},{"id":86,"date":"2026-05-21","event":"WMT 26'Q1財報","category":"客戶/品牌相關"},{"id":87,"date":"2026-05-22","event":"日本4月CPI","category":"重要經濟數據"},{"id":88,"date":"2026-05-20","event":"歐洲4月CPI","category":"重要經濟數據"},{"id":89,"date":"2026-05-26","event":"美國5月消費信心(CB)","category":"重要經濟數據"},{"id":90,"date":"2026-05-27","event":"DKS 26'Q1財報","category":"客戶/品牌相關"},{"id":91,"date":"2026-05-28","event":"美國4月PCE","category":"重要經濟數據"},{"id":92,"date":"2026-05-29","event":"日本4月失業率","category":"重要經濟數據"},{"id":93,"date":"2026-05-26","event":"聚陽股東會","category":"同業相關"},{"id":94,"date":"2026-05-27","event":"A&F 26'Q1財報","category":"客戶/品牌相關"},{"id":95,"date":"2026-05-28","event":"KOH 26'Q1財報","category":"客戶/品牌相關"},{"id":96,"date":"2026-05-29","event":"日本5月消費信心","category":"重要經濟數據"},{"id":97,"date":"2026-05-28","event":"Gap inc. 26'Q1財報","category":"客戶/品牌相關"},{"id":98,"date":"2026-05-29","event":"日本4月零售","category":"重要經濟數據"},{"id":99,"date":"2026-05-29","event":"儒鴻股東會","category":"同業相關"},{"id":100,"date":"2026-06-01","event":"歐洲4月失業率","category":"重要經濟數據"},{"id":101,"date":"2026-06-04","event":"歐洲4月零售","category":"重要經濟數據"},{"id":102,"date":"2026-06-05","event":"美國5月非農/失業率","category":"重要經濟數據"},{"id":103,"date":"2026-06-01","event":"台北國際電腦展COMPUTEX","category":"其他","endDate":"2026-06-04"},{"id":104,"date":"2026-06-10","event":"美國5月CPI","category":"重要經濟數據"},{"id":105,"date":"2026-06-12","event":"美國6月消費信心(密大)","category":"重要經濟數據"},{"id":106,"date":"2026-06-16","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-06-17"},{"id":107,"date":"2026-06-19","event":"日本5月CPI","category":"重要經濟數據"},{"id":108,"date":"2026-06-17","event":"美國5月零售","category":"重要經濟數據"},{"id":109,"date":"2026-06-17","event":"歐洲5月CPI","category":"重要經濟數據"},{"id":110,"date":"2026-06-14","event":"G7高峰會","category":"其他","endDate":"2026-06-16"},{"id":111,"date":"2026-06-17","event":"廣越股東會","category":"同業相關"},{"id":112,"date":"2026-06-25","event":"美國5月PCE","category":"重要經濟數據"},{"id":113,"date":"2026-06-29","event":"日本5月零售","category":"重要經濟數據"},{"id":114,"date":"2026-06-30","event":"美國6月消費信心(CB)","category":"重要經濟數據"},{"id":115,"date":"2026-07-01","event":"日本6月消費信心","category":"重要經濟數據"},{"id":116,"date":"2026-07-02","event":"美國6月非農/失業率","category":"重要經濟數據"},{"id":117,"date":"2026-06-30","event":"日本5月失業率","category":"重要經濟數據"},{"id":118,"date":"2026-07-02","event":"歐洲5月失業率","category":"重要經濟數據"},{"id":119,"date":"2026-07-06","event":"歐洲5月零售","category":"重要經濟數據"},{"id":120,"date":"2026-07-14","event":"美國6月CPI","category":"重要經濟數據"},{"id":121,"date":"2026-07-16","event":"美國6月零售","category":"重要經濟數據"},{"id":122,"date":"2026-07-17","event":"歐洲6月CPI","category":"重要經濟數據"},{"id":123,"date":"2026-07-17","event":"美國7月消費信心(密大)","category":"重要經濟數據"},{"id":124,"date":"2026-07-24","event":"日本6月CPI","category":"重要經濟數據"},{"id":125,"date":"2026-07-28","event":"美國7月消費信心(CB)","category":"重要經濟數據"},{"id":126,"date":"2026-07-30","event":"美國6月PCE","category":"重要經濟數據"},{"id":127,"date":"2026-07-31","event":"日本6月失業率","category":"重要經濟數據"},{"id":128,"date":"2026-07-28","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-07-29"},{"id":129,"date":"2026-07-30","event":"歐洲6月失業率","category":"重要經濟數據"},{"id":130,"date":"2026-07-31","event":"日本6月零售","category":"重要經濟數據"},{"id":131,"date":"2026-08-06","event":"歐洲6月零售","category":"重要經濟數據"},{"id":132,"date":"2026-08-07","event":"美國7月非農/失業率","category":"重要經濟數據"},{"id":133,"date":"2026-08-12","event":"美國7月CPI","category":"重要經濟數據"},{"id":134,"date":"2026-08-14","event":"美國7月零售","category":"重要經濟數據"},{"id":135,"date":"2026-08-14","event":"美國8月消費信心(密大)","category":"重要經濟數據"},{"id":136,"date":"2026-08-19","event":"歐洲7月CPI","category":"重要經濟數據"},{"id":137,"date":"2026-08-21","event":"日本7月CPI","category":"重要經濟數據"},{"id":138,"date":"2026-08-25","event":"美國8月消費信心(CB)","category":"重要經濟數據"},{"id":139,"date":"2026-08-26","event":"美國7月PCE","category":"重要經濟數據"},{"id":140,"date":"2026-08-28","event":"日本7月失業率","category":"重要經濟數據"},{"id":141,"date":"2026-08-31","event":"日本7月零售","category":"重要經濟數據"},{"id":142,"date":"2026-09-01","event":"歐洲7月失業率","category":"重要經濟數據"},{"id":143,"date":"2026-09-04","event":"美國8月非農/失業率","category":"重要經濟數據"},{"id":144,"date":"2026-09-04","event":"歐洲7月零售","category":"重要經濟數據"},{"id":145,"date":"2026-09-11","event":"美國8月CPI","category":"重要經濟數據"},{"id":146,"date":"2026-09-11","event":"美國9月消費信心(密大)","category":"重要經濟數據"},{"id":147,"date":"2026-09-15","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-09-16"},{"id":148,"date":"2026-09-17","event":"歐洲8月CPI","category":"重要經濟數據"},{"id":149,"date":"2026-09-18","event":"日本8月CPI","category":"重要經濟數據"},{"id":150,"date":"2026-09-16","event":"美國8月零售","category":"重要經濟數據"},{"id":151,"date":"2026-09-29","event":"美國9月消費信心(CB)","category":"重要經濟數據"},{"id":152,"date":"2026-09-30","event":"美國8月PCE","category":"重要經濟數據"},{"id":153,"date":"2026-10-01","event":"歐洲8月失業率","category":"重要經濟數據"},{"id":154,"date":"2026-10-02","event":"美國9月非農/失業率","category":"重要經濟數據"},{"id":155,"date":"2026-09-30","event":"日本8月零售","category":"重要經濟數據"},{"id":156,"date":"2026-10-02","event":"日本8月失業率","category":"重要經濟數據"},{"id":157,"date":"2026-10-06","event":"歐洲8月零售","category":"重要經濟數據"},{"id":158,"date":"2026-10-09","event":"美國10月消費信心(密大)","category":"重要經濟數據"},{"id":159,"date":"2026-10-14","event":"美國9月CPI","category":"重要經濟數據"},{"id":160,"date":"2026-10-15","event":"美國9月零售","category":"重要經濟數據"},{"id":161,"date":"2026-10-16","event":"歐洲9月CPI","category":"重要經濟數據"},{"id":162,"date":"2026-10-23","event":"日本9月CPI","category":"重要經濟數據"},{"id":163,"date":"2026-10-27","event":"美國10月消費信心(CB)","category":"重要經濟數據"},{"id":164,"date":"2026-10-29","event":"美國9月PCE","category":"重要經濟數據"},{"id":165,"date":"2026-10-30","event":"歐洲9月失業率","category":"重要經濟數據"},{"id":166,"date":"2026-10-27","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-10-28"},{"id":167,"date":"2026-10-30","event":"日本9月失業率","category":"重要經濟數據"},{"id":168,"date":"2026-10-30","event":"日本9月零售","category":"重要經濟數據"},{"id":169,"date":"2026-11-03","event":"美國期中選舉","category":"其他"},{"id":170,"date":"2026-11-06","event":"美國10月非農/失業率","category":"重要經濟數據"},{"id":171,"date":"2026-11-06","event":"美國11月消費信心(密大)","category":"重要經濟數據"},{"id":172,"date":"2026-11-06","event":"歐洲9月零售","category":"重要經濟數據"},{"id":173,"date":"2026-11-10","event":"美國10月CPI","category":"重要經濟數據"},{"id":174,"date":"2026-11-17","event":"美國10月零售","category":"重要經濟數據"},{"id":175,"date":"2026-11-18","event":"歐洲10月CPI","category":"重要經濟數據"},{"id":176,"date":"2026-11-20","event":"日本10月CPI","category":"重要經濟數據"},{"id":177,"date":"2026-11-24","event":"孟加拉預計從LDC畢業","category":"供應鏈相關"},{"id":178,"date":"2026-11-25","event":"美國10月PCE","category":"重要經濟數據"},{"id":179,"date":"2026-11-24","event":"美國11月消費信心(CB)","category":"重要經濟數據"},{"id":180,"date":"2026-11-30","event":"日本10月零售","category":"重要經濟數據"},{"id":181,"date":"2026-12-01","event":"日本10月失業率","category":"重要經濟數據"},{"id":182,"date":"2026-12-02","event":"歐洲10月失業率","category":"重要經濟數據"},{"id":183,"date":"2026-12-04","event":"美國11月非農/失業率","category":"重要經濟數據"},{"id":184,"date":"2026-12-04","event":"歐洲10月零售","category":"重要經濟數據"},{"id":185,"date":"2026-12-04","event":"美國12月消費信心(密大)","category":"重要經濟數據"},{"id":186,"date":"2026-12-08","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-12-09"},{"id":187,"date":"2026-12-10","event":"美國11月CPI","category":"重要經濟數據"},{"id":188,"date":"2026-12-14","event":"G20峰會","category":"其他","endDate":"2026-12-15"},{"id":189,"date":"2026-12-16","event":"美國11月零售","category":"重要經濟數據"},{"id":190,"date":"2026-12-17","event":"歐洲11月CPI","category":"重要經濟數據"},{"id":191,"date":"2026-12-18","event":"日本11月CPI","category":"重要經濟數據"},{"id":192,"date":"2026-12-22","event":"美國12月消費信心(CB)","category":"重要經濟數據"},{"id":193,"date":"2026-12-23","event":"美國11月PCE","category":"重要經濟數據"},{"id":194,"date":"2026-12-25","event":"日本11月失業率","category":"重要經濟數據"},{"id":195,"date":"2026-12-28","event":"日本11月零售","category":"重要經濟數據"}];
+const SEED_EVENTS = [{"id":1,"date":"2026-01-08","event":"歐洲11月失業率","category":"重要經濟數據","endDate":"2026-01-08"},{"id":2,"date":"2026-01-09","event":"美國12月非農/失業率","category":"重要經濟數據","endDate":"2026-01-09"},{"id":3,"date":"2026-01-08","event":"日本12月消費信心","category":"重要經濟數據","endDate":"2026-01-08"},{"id":4,"date":"2026-01-09","event":"美國1月消費信心(密大)","category":"重要經濟數據","endDate":"2026-01-09"},{"id":5,"date":"2026-01-09","event":"歐洲11月零售","category":"重要經濟數據","endDate":"2026-01-09"},{"id":6,"date":"2026-01-13","event":"美國12月CPI","category":"重要經濟數據","endDate":"2026-01-13"},{"id":7,"date":"2026-01-14","event":"美國11月零售","category":"重要經濟數據","endDate":"2026-01-14"},{"id":8,"date":"2026-01-19","event":"歐洲12月CPI","category":"重要經濟數據","endDate":"2026-01-19"},{"id":9,"date":"2026-01-23","event":"日本12月CPI","category":"重要經濟數據","endDate":"2026-01-23"},{"id":10,"date":"2026-01-19","event":"世界經濟論壇","category":"其他","endDate":"2026-01-23"},{"id":11,"date":"2026-01-27","event":"美國1月消費信心(CB)","category":"重要經濟數據","endDate":"2026-01-27"},{"id":12,"date":"2026-01-29","event":"日本1月消費信心","category":"重要經濟數據","endDate":"2026-01-29"},{"id":13,"date":"2026-01-30","event":"日本12月零售","category":"重要經濟數據","endDate":"2026-01-30"},{"id":14,"date":"2026-01-27","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-01-28"},{"id":15,"date":"2026-01-30","event":"日本12月失業率","category":"重要經濟數據","endDate":"2026-01-30"},{"id":16,"date":"2026-01-30","event":"歐洲12月失業率","category":"重要經濟數據","endDate":"2026-01-30"},{"id":17,"date":"2026-02-06","event":"美國1月非農/失業率","category":"重要經濟數據","endDate":"2026-02-06"},{"id":18,"date":"2026-02-05","event":"歐洲12月零售","category":"重要經濟數據","endDate":"2026-02-05"},{"id":19,"date":"2026-02-06","event":"美國2月消費信心(密大)","category":"重要經濟數據","endDate":"2026-02-06"},{"id":20,"date":"2026-02-11","event":"美國1月非農","category":"重要經濟數據","endDate":"2026-02-11"},{"id":21,"date":"2026-02-12","event":"孟加拉大選","category":"供應鏈相關","endDate":"2026-02-12"},{"id":22,"date":"2026-02-13","event":"美國1月CPI","category":"重要經濟數據","endDate":"2026-02-13"},{"id":23,"date":"2026-02-18","event":"聯準會會議記錄","category":"聯準會動態","endDate":"2026-02-18"},{"id":24,"date":"2026-02-19","event":"WMT Q4財報","category":"客戶/品牌相關","endDate":"2026-02-19"},{"id":25,"date":"2026-02-20","event":"日本1月CPI","category":"重要經濟數據","endDate":"2026-02-20"},{"id":26,"date":"2026-02-20","event":"美國Q4 GDP(初值)","category":"重要經濟數據","endDate":"2026-02-20"},{"id":27,"date":"2026-02-20","event":"美最高法院開庭","category":"供應鏈相關","endDate":"2026-02-20"},{"id":28,"date":"2026-02-24","event":"停止徵收對等關稅，暫時性10%關稅生效","category":"供應鏈相關","endDate":"2026-02-24"},{"id":29,"date":"2026-02-24","event":"美國2月消費信心(CB)","category":"重要經濟數據","endDate":"2026-02-24"},{"id":30,"date":"2026-02-25","event":"歐洲1月CPI","category":"重要經濟數據","endDate":"2026-02-25"},{"id":31,"date":"2026-02-26","event":"美國1月PCE","category":"重要經濟數據","endDate":"2026-02-26"},{"id":32,"date":"2026-02-27","event":"日本1月零售","category":"重要經濟數據","endDate":"2026-02-27"},{"id":33,"date":"2026-03-03","event":"日本1月失業率","category":"重要經濟數據","endDate":"2026-03-03"},{"id":34,"date":"2026-03-04","event":"日本2月消費信心","category":"重要經濟數據","endDate":"2026-03-04"},{"id":35,"date":"2026-03-05","event":"歐洲1月零售","category":"重要經濟數據","endDate":"2026-03-05"},{"id":36,"date":"2026-03-06","event":"美國2月非農/失業率","category":"重要經濟數據","endDate":"2026-03-06"},{"id":37,"date":"2026-03-03","event":"Target Q4財報","category":"客戶/品牌相關","endDate":"2026-03-03"},{"id":38,"date":"2026-03-04","event":"歐洲1月失業率","category":"重要經濟數據","endDate":"2026-03-04"},{"id":39,"date":"2026-03-05","event":"GAP inc. Q4財報","category":"客戶/品牌相關","endDate":"2026-03-05"},{"id":40,"date":"2026-03-06","event":"美國1月零售","category":"重要經濟數據","endDate":"2026-03-06"},{"id":41,"date":"2026-03-04","event":"A&F Q4財報","category":"客戶/品牌相關","endDate":"2026-03-04"},{"id":42,"date":"2026-03-05","event":"Costco Q4財報","category":"客戶/品牌相關","endDate":"2026-03-05"},{"id":43,"date":"2026-03-10","event":"Kohl's Q4財報","category":"客戶/品牌相關","endDate":"2026-03-10"},{"id":44,"date":"2026-03-11","event":"美國2月CPI","category":"重要經濟數據","endDate":"2026-03-11"},{"id":45,"date":"2026-03-12","event":"Dick's Q4財報","category":"客戶/品牌相關","endDate":"2026-03-12"},{"id":46,"date":"2026-03-13","event":"美國3月消費信心(密大)","category":"重要經濟數據","endDate":"2026-03-13"},{"id":47,"date":"2026-03-10","event":"廣越 2025年財報","category":"同業相關","endDate":"2026-03-10"},{"id":48,"date":"2026-03-11","event":"Inditex Q4財報","category":"客戶/品牌相關","endDate":"2026-03-11"},{"id":49,"date":"2026-03-17","event":"儒鴻法說會","category":"同業相關","endDate":"2026-03-17"},{"id":50,"date":"2026-03-18","event":"歐洲2月CPI","category":"重要經濟數據","endDate":"2026-03-18"},{"id":51,"date":"2026-03-17","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-03-18"},{"id":52,"date":"2026-03-24","event":"日本2月CPI","category":"重要經濟數據","endDate":"2026-03-24"},{"id":53,"date":"2026-03-24","event":"博鰲亞洲論壇","category":"其他","endDate":"2026-03-27"},{"id":54,"date":"2026-03-31","event":"美國3月消費信心(CB)","category":"重要經濟數據","endDate":"2026-03-31"},{"id":55,"date":"2026-04-01","event":"美國2月零售","category":"重要經濟數據","endDate":"2026-04-01"},{"id":56,"date":"2026-04-03","event":"美國3月非農/失業率","category":"重要經濟數據","endDate":"2026-04-03"},{"id":57,"date":"2026-03-31","event":"日本2月失業率","category":"重要經濟數據","endDate":"2026-03-31"},{"id":58,"date":"2026-04-01","event":"歐洲2月失業率","category":"重要經濟數據","endDate":"2026-04-01"},{"id":59,"date":"2026-03-31","event":"日本2月零售","category":"重要經濟數據","endDate":"2026-03-31"},{"id":60,"date":"2026-04-08","event":"歐洲2月零售","category":"重要經濟數據","endDate":"2026-04-08"},{"id":61,"date":"2026-04-09","event":"美國2月PCE","category":"重要經濟數據","endDate":"2026-04-09"},{"id":62,"date":"2026-04-10","event":"美國3月CPI","category":"重要經濟數據","endDate":"2026-04-10"},{"id":63,"date":"2026-04-09","event":"日本3月消費信心","category":"重要經濟數據","endDate":"2026-04-09"},{"id":64,"date":"2026-04-10","event":"美國4月消費信心(密大)","category":"重要經濟數據","endDate":"2026-04-10"},{"id":65,"date":"2026-04-16","event":"歐洲3月CPI","category":"重要經濟數據","endDate":"2026-04-16"},{"id":66,"date":"2026-04-21","event":"美國3月零售","category":"重要經濟數據","endDate":"2026-04-21"},{"id":67,"date":"2026-04-24","event":"日本3月CPI","category":"重要經濟數據","endDate":"2026-04-24"},{"id":68,"date":"2026-04-28","event":"美國4月消費信心(CB)","category":"重要經濟數據","endDate":"2026-04-28"},{"id":69,"date":"2026-04-30","event":"美國3月PCE","category":"重要經濟數據","endDate":"2026-04-30"},{"id":70,"date":"2026-04-28","event":"日本3月失業率","category":"重要經濟數據","endDate":"2026-04-28"},{"id":71,"date":"2026-04-30","event":"日本4月消費信心","category":"重要經濟數據","endDate":"2026-04-30"},{"id":72,"date":"2026-04-28","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-04-29"},{"id":73,"date":"2026-04-30","event":"日本3月零售","category":"重要經濟數據","endDate":"2026-04-30"},{"id":74,"date":"2026-04-30","event":"歐洲3月失業率","category":"重要經濟數據","endDate":"2026-04-30"},{"id":75,"date":"2026-05-07","event":"歐洲3月零售","category":"重要經濟數據","endDate":"2026-05-07"},{"id":76,"date":"2026-05-08","event":"美國4月非農/失業率","category":"重要經濟數據","endDate":"2026-05-08"},{"id":77,"date":"2026-05-07","event":"儒鴻、廣越Q1財報","category":"同業相關","endDate":"2026-05-07"},{"id":78,"date":"2026-05-08","event":"美國5月消費信心(密大)","category":"重要經濟數據","endDate":"2026-05-08"},{"id":79,"date":"2026-05-12","event":"美國4月CPI","category":"重要經濟數據","endDate":"2026-05-12"},{"id":80,"date":"2026-05-14","event":"美國4月零售","category":"重要經濟數據","endDate":"2026-05-14"},{"id":81,"date":"2026-05-12","event":"Gap inc.年度股東大會","category":"同業相關","endDate":"2026-05-12"},{"id":82,"date":"2026-05-13","event":"川習會","category":"供應鏈相關","endDate":"2026-05-15"},{"id":83,"date":"2026-05-12","event":"廣越Q1法說會","category":"同業相關","endDate":"2026-05-12"},{"id":84,"date":"2026-05-19","event":"儒鴻Q1法說會","category":"同業相關","endDate":"2026-05-19"},{"id":85,"date":"2026-05-20","event":"TGT 26'Q1財報","category":"客戶/品牌相關","endDate":"2026-05-20"},{"id":86,"date":"2026-05-21","event":"WMT 26'Q1財報","category":"客戶/品牌相關","endDate":"2026-05-21"},{"id":87,"date":"2026-05-22","event":"日本4月CPI","category":"重要經濟數據","endDate":"2026-05-22"},{"id":88,"date":"2026-05-20","event":"歐洲4月CPI","category":"重要經濟數據","endDate":"2026-05-20"},{"id":89,"date":"2026-05-26","event":"美國5月消費信心(CB)","category":"重要經濟數據","endDate":"2026-05-26"},{"id":90,"date":"2026-05-27","event":"DKS 26'Q1財報","category":"客戶/品牌相關","endDate":"2026-05-27"},{"id":91,"date":"2026-05-28","event":"美國4月PCE","category":"重要經濟數據","endDate":"2026-05-28"},{"id":92,"date":"2026-05-29","event":"日本4月失業率","category":"重要經濟數據","endDate":"2026-05-29"},{"id":93,"date":"2026-05-26","event":"聚陽股東會","category":"同業相關","endDate":"2026-05-26"},{"id":94,"date":"2026-05-27","event":"A&F 26'Q1財報","category":"客戶/品牌相關","endDate":"2026-05-27"},{"id":95,"date":"2026-05-28","event":"KOH 26'Q1財報","category":"客戶/品牌相關","endDate":"2026-05-28"},{"id":96,"date":"2026-05-29","event":"日本5月消費信心","category":"重要經濟數據","endDate":"2026-05-29"},{"id":97,"date":"2026-05-28","event":"Gap inc. 26'Q1財報","category":"客戶/品牌相關","endDate":"2026-05-28"},{"id":98,"date":"2026-05-29","event":"日本4月零售","category":"重要經濟數據","endDate":"2026-05-29"},{"id":99,"date":"2026-05-29","event":"儒鴻股東會","category":"同業相關","endDate":"2026-05-29"},{"id":100,"date":"2026-06-01","event":"歐洲4月失業率","category":"重要經濟數據","endDate":"2026-06-01"},{"id":101,"date":"2026-06-04","event":"歐洲4月零售","category":"重要經濟數據","endDate":"2026-06-04"},{"id":102,"date":"2026-06-05","event":"美國5月非農/失業率","category":"重要經濟數據","endDate":"2026-06-05"},{"id":103,"date":"2026-06-01","event":"台北國際電腦展COMPUTEX","category":"其他","endDate":"2026-06-04"},{"id":104,"date":"2026-06-10","event":"美國5月CPI","category":"重要經濟數據","endDate":"2026-06-10"},{"id":105,"date":"2026-06-12","event":"美國6月消費信心(密大)","category":"重要經濟數據","endDate":"2026-06-12"},{"id":106,"date":"2026-06-16","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-06-17"},{"id":107,"date":"2026-06-19","event":"日本5月CPI","category":"重要經濟數據","endDate":"2026-06-19"},{"id":108,"date":"2026-06-17","event":"美國5月零售","category":"重要經濟數據","endDate":"2026-06-17"},{"id":109,"date":"2026-06-17","event":"歐洲5月CPI","category":"重要經濟數據","endDate":"2026-06-17"},{"id":110,"date":"2026-06-14","event":"G7高峰會","category":"其他","endDate":"2026-06-16"},{"id":111,"date":"2026-06-17","event":"廣越股東會","category":"同業相關","endDate":"2026-06-17"},{"id":112,"date":"2026-06-25","event":"美國5月PCE","category":"重要經濟數據","endDate":"2026-06-25"},{"id":113,"date":"2026-06-29","event":"日本5月零售","category":"重要經濟數據","endDate":"2026-06-29"},{"id":114,"date":"2026-06-30","event":"美國6月消費信心(CB)","category":"重要經濟數據","endDate":"2026-06-30"},{"id":115,"date":"2026-07-01","event":"日本6月消費信心","category":"重要經濟數據","endDate":"2026-07-01"},{"id":116,"date":"2026-07-02","event":"美國6月非農/失業率","category":"重要經濟數據","endDate":"2026-07-02"},{"id":117,"date":"2026-06-30","event":"日本5月失業率","category":"重要經濟數據","endDate":"2026-06-30"},{"id":118,"date":"2026-07-02","event":"歐洲5月失業率","category":"重要經濟數據","endDate":"2026-07-02"},{"id":119,"date":"2026-07-06","event":"歐洲5月零售","category":"重要經濟數據","endDate":"2026-07-06"},{"id":120,"date":"2026-07-14","event":"美國6月CPI","category":"重要經濟數據","endDate":"2026-07-14"},{"id":121,"date":"2026-07-16","event":"美國6月零售","category":"重要經濟數據","endDate":"2026-07-16"},{"id":122,"date":"2026-07-17","event":"歐洲6月CPI","category":"重要經濟數據","endDate":"2026-07-17"},{"id":123,"date":"2026-07-17","event":"美國7月消費信心(密大)","category":"重要經濟數據","endDate":"2026-07-17"},{"id":124,"date":"2026-07-24","event":"日本6月CPI","category":"重要經濟數據","endDate":"2026-07-24"},{"id":125,"date":"2026-07-28","event":"美國7月消費信心(CB)","category":"重要經濟數據","endDate":"2026-07-28"},{"id":126,"date":"2026-07-30","event":"美國6月PCE","category":"重要經濟數據","endDate":"2026-07-30"},{"id":127,"date":"2026-07-31","event":"日本6月失業率","category":"重要經濟數據","endDate":"2026-07-31"},{"id":128,"date":"2026-07-28","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-07-29"},{"id":129,"date":"2026-07-30","event":"歐洲6月失業率","category":"重要經濟數據","endDate":"2026-07-30"},{"id":130,"date":"2026-07-31","event":"日本6月零售","category":"重要經濟數據","endDate":"2026-07-31"},{"id":131,"date":"2026-08-06","event":"歐洲6月零售","category":"重要經濟數據","endDate":"2026-08-06"},{"id":132,"date":"2026-08-07","event":"美國7月非農/失業率","category":"重要經濟數據","endDate":"2026-08-07"},{"id":133,"date":"2026-08-12","event":"美國7月CPI","category":"重要經濟數據","endDate":"2026-08-12"},{"id":134,"date":"2026-08-14","event":"美國7月零售","category":"重要經濟數據","endDate":"2026-08-14"},{"id":135,"date":"2026-08-14","event":"美國8月消費信心(密大)","category":"重要經濟數據","endDate":"2026-08-14"},{"id":136,"date":"2026-08-19","event":"歐洲7月CPI","category":"重要經濟數據","endDate":"2026-08-19"},{"id":137,"date":"2026-08-21","event":"日本7月CPI","category":"重要經濟數據","endDate":"2026-08-21"},{"id":138,"date":"2026-08-25","event":"美國8月消費信心(CB)","category":"重要經濟數據","endDate":"2026-08-25"},{"id":139,"date":"2026-08-26","event":"美國7月PCE","category":"重要經濟數據","endDate":"2026-08-26"},{"id":140,"date":"2026-08-28","event":"日本7月失業率","category":"重要經濟數據","endDate":"2026-08-28"},{"id":141,"date":"2026-08-31","event":"日本7月零售","category":"重要經濟數據","endDate":"2026-08-31"},{"id":142,"date":"2026-09-01","event":"歐洲7月失業率","category":"重要經濟數據","endDate":"2026-09-01"},{"id":143,"date":"2026-09-04","event":"美國8月非農/失業率","category":"重要經濟數據","endDate":"2026-09-04"},{"id":144,"date":"2026-09-04","event":"歐洲7月零售","category":"重要經濟數據","endDate":"2026-09-04"},{"id":145,"date":"2026-09-11","event":"美國8月CPI","category":"重要經濟數據","endDate":"2026-09-11"},{"id":147,"date":"2026-09-15","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-09-16"},{"id":148,"date":"2026-09-17","event":"歐洲8月CPI","category":"重要經濟數據","endDate":"2026-09-17"},{"id":149,"date":"2026-09-18","event":"日本8月CPI","category":"重要經濟數據","endDate":"2026-09-18"},{"id":150,"date":"2026-09-16","event":"美國8月零售","category":"重要經濟數據","endDate":"2026-09-16"},{"id":151,"date":"2026-09-29","event":"美國9月消費信心(CB)","category":"重要經濟數據","endDate":"2026-09-29"},{"id":152,"date":"2026-09-30","event":"美國8月PCE","category":"重要經濟數據","endDate":"2026-09-30"},{"id":153,"date":"2026-10-01","event":"歐洲8月失業率","category":"重要經濟數據","endDate":"2026-10-01"},{"id":154,"date":"2026-10-02","event":"美國9月非農/失業率","category":"重要經濟數據","endDate":"2026-10-02"},{"id":155,"date":"2026-09-30","event":"日本8月零售","category":"重要經濟數據","endDate":"2026-09-30"},{"id":156,"date":"2026-10-02","event":"日本8月失業率","category":"重要經濟數據","endDate":"2026-10-02"},{"id":157,"date":"2026-10-06","event":"歐洲8月零售","category":"重要經濟數據","endDate":"2026-10-06"},{"id":158,"date":"2026-10-09","event":"美國10月消費信心(密大)","category":"重要經濟數據","endDate":"2026-10-09"},{"id":159,"date":"2026-10-14","event":"美國9月CPI","category":"重要經濟數據","endDate":"2026-10-14"},{"id":160,"date":"2026-10-15","event":"美國9月零售","category":"重要經濟數據","endDate":"2026-10-15"},{"id":161,"date":"2026-10-16","event":"歐洲9月CPI","category":"重要經濟數據","endDate":"2026-10-16"},{"id":162,"date":"2026-10-23","event":"日本9月CPI","category":"重要經濟數據","endDate":"2026-10-23"},{"id":163,"date":"2026-10-27","event":"美國10月消費信心(CB)","category":"重要經濟數據","endDate":"2026-10-27"},{"id":164,"date":"2026-10-29","event":"美國9月PCE","category":"重要經濟數據","endDate":"2026-10-29"},{"id":165,"date":"2026-10-30","event":"歐洲9月失業率","category":"重要經濟數據","endDate":"2026-10-30"},{"id":166,"date":"2026-10-27","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-10-28"},{"id":167,"date":"2026-10-30","event":"日本9月失業率","category":"重要經濟數據","endDate":"2026-10-30"},{"id":168,"date":"2026-10-30","event":"日本9月零售","category":"重要經濟數據","endDate":"2026-10-30"},{"id":169,"date":"2026-11-03","event":"美國期中選舉","category":"其他","endDate":"2026-11-03"},{"id":170,"date":"2026-11-06","event":"美國10月非農/失業率","category":"重要經濟數據","endDate":"2026-11-06"},{"id":171,"date":"2026-11-06","event":"美國11月消費信心(密大)","category":"重要經濟數據","endDate":"2026-11-06"},{"id":172,"date":"2026-11-06","event":"歐洲9月零售","category":"重要經濟數據","endDate":"2026-11-06"},{"id":173,"date":"2026-11-10","event":"美國10月CPI","category":"重要經濟數據","endDate":"2026-11-10"},{"id":174,"date":"2026-11-17","event":"美國10月零售","category":"重要經濟數據","endDate":"2026-11-17"},{"id":175,"date":"2026-11-18","event":"歐洲10月CPI","category":"重要經濟數據","endDate":"2026-11-18"},{"id":176,"date":"2026-11-20","event":"日本10月CPI","category":"重要經濟數據","endDate":"2026-11-20"},{"id":177,"date":"2026-11-24","event":"孟加拉預計從LDC畢業","category":"供應鏈相關","endDate":"2026-11-24"},{"id":178,"date":"2026-11-25","event":"美國10月PCE","category":"重要經濟數據","endDate":"2026-11-25"},{"id":179,"date":"2026-11-24","event":"美國11月消費信心(CB)","category":"重要經濟數據","endDate":"2026-11-24"},{"id":180,"date":"2026-11-30","event":"日本10月零售","category":"重要經濟數據","endDate":"2026-11-30"},{"id":181,"date":"2026-12-01","event":"日本10月失業率","category":"重要經濟數據","endDate":"2026-12-01"},{"id":182,"date":"2026-12-02","event":"歐洲10月失業率","category":"重要經濟數據","endDate":"2026-12-02"},{"id":183,"date":"2026-12-04","event":"美國11月非農/失業率","category":"重要經濟數據","endDate":"2026-12-04"},{"id":184,"date":"2026-12-04","event":"歐洲10月零售","category":"重要經濟數據","endDate":"2026-12-04"},{"id":185,"date":"2026-12-04","event":"美國12月消費信心(密大)","category":"重要經濟數據","endDate":"2026-12-04"},{"id":186,"date":"2026-12-08","event":"聯準會利率會議","category":"聯準會動態","endDate":"2026-12-09"},{"id":187,"date":"2026-12-10","event":"美國11月CPI","category":"重要經濟數據","endDate":"2026-12-10"},{"id":188,"date":"2026-12-14","event":"G20峰會","category":"其他","endDate":"2026-12-15"},{"id":189,"date":"2026-12-16","event":"美國11月零售","category":"重要經濟數據","endDate":"2026-12-16"},{"id":190,"date":"2026-12-17","event":"歐洲11月CPI","category":"重要經濟數據","endDate":"2026-12-17"},{"id":191,"date":"2026-12-18","event":"日本11月CPI","category":"重要經濟數據","endDate":"2026-12-18"},{"id":192,"date":"2026-12-22","event":"美國12月消費信心(CB)","category":"重要經濟數據","endDate":"2026-12-22"},{"id":193,"date":"2026-12-23","event":"美國11月PCE","category":"重要經濟數據","endDate":"2026-12-23"},{"id":194,"date":"2026-12-25","event":"日本11月失業率","category":"重要經濟數據","endDate":"2026-12-25"},{"id":195,"date":"2026-12-28","event":"日本11月零售","category":"重要經濟數據","endDate":"2026-12-28"},{"date":"2026-09-02","event":"美國8月非農/失業率","category":"重要經濟數據","id":106,"endDate":"2026-09-02"},{"id":196,"date":"2026-06-04","endDate":"2026-06-04","event":"Lululemon 26'Q1財報","category":"客戶/品牌相關","note":""}];
 
 // ─── State ───
 // Migrate old category names and clear 2025 data
@@ -1175,10 +1183,109 @@ let activeMonths = new Set(); // empty = all
 let currentView = window.matchMedia('(max-width: 768px)').matches ? 'timeline' : 'calendar';
 let editingId = null;
 const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+const SYNC_API_URL = window.TA_SYNC_API_URL || (
+  location.protocol === 'http:' || location.protocol === 'https:'
+    ? '/api/events'
+    : 'http://localhost:8787/api/events'
+);
+const SYNC_TIMEOUT_MS = 6000;
+let syncTimer = null;
 
-function save() {
+function persistLocal() {
   localStorage.setItem('ta_events', JSON.stringify(events));
   localStorage.setItem('ta_events_version', DATA_VERSION);
+}
+
+function save(options = {}) {
+  persistLocal();
+  localStorage.setItem('ta_events_dirty', '1');
+  if (options.sync !== false) queueSync();
+}
+
+function cleanEventsForSync() {
+  return events.map(e => {
+    const { _rangePos, ...clean } = e;
+    return normalizeEvent(clean, clean.id);
+  }).sort((a, b) => (a.date + a.event).localeCompare(b.date + b.event));
+}
+
+function updateNextId() {
+  nextId = Math.max(...events.map(e => e.id), 0) + 1;
+}
+
+function setSyncStatus(text, color = 'var(--muted)') {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.textContent = text;
+  el.style.color = color;
+}
+
+function queueSync() {
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => syncToServer(false), 500);
+}
+
+async function fetchJsonWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), SYNC_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : null;
+    if (!res.ok) throw new Error(data?.error || res.statusText || '同步失敗');
+    return data;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function loadFromServer() {
+  if (localStorage.getItem('ta_events_dirty') === '1') {
+    setSyncStatus('尚未同步', '#d97706');
+    queueSync();
+    return;
+  }
+  try {
+    setSyncStatus('同步讀取中...');
+    const data = await fetchJsonWithTimeout(SYNC_API_URL);
+    if (!data || !Array.isArray(data.events)) throw new Error('events.json 格式不正確');
+    events = data.events.map((e, i) => normalizeEvent(e, i + 1));
+    updateNextId();
+    persistLocal();
+    renderAll();
+    setSyncStatus(data.updatedAt ? '已同步 ' + new Date(data.updatedAt).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }) : '已同步', 'var(--accent)');
+  } catch (err) {
+    setSyncStatus('本機資料', '#d97706');
+  }
+}
+
+async function syncToServer(showSuccess = true) {
+  clearTimeout(syncTimer);
+  try {
+    setSyncStatus('同步中...');
+    const data = await fetchJsonWithTimeout(SYNC_API_URL, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        version: DATA_VERSION,
+        updatedAt: new Date().toISOString(),
+        events: cleanEventsForSync()
+      })
+    });
+    if (data && Array.isArray(data.events)) {
+      events = data.events.map((e, i) => normalizeEvent(e, i + 1));
+      updateNextId();
+      persistLocal();
+      renderAll();
+    }
+    localStorage.setItem('ta_events_dirty', '0');
+    setSyncStatus('已同步 ' + new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' }), 'var(--accent)');
+    if (showSuccess) showToast('✅ 已同步寫入 events.json');
+  } catch (err) {
+    localStorage.setItem('ta_events_dirty', '1');
+    setSyncStatus('尚未同步', '#d97706');
+    if (showSuccess) showToast('⚠️ 內網同步服務未連線，已先存本機');
+  }
 }
 
 function parseDate(str) {
@@ -1336,6 +1443,13 @@ function renderContent() {
   else renderCalendar();
 }
 
+function renderAll() {
+  renderStats();
+  renderCatFilters();
+  renderMonthFilters();
+  setView(currentView);
+}
+
 function renderTimeline() {
   const filtered = getFilteredEvents();
   const content = document.getElementById('contentArea');
@@ -1457,7 +1571,7 @@ function renderCalendar() {
           }).join('');
           const more = dayEvs.length > MAX_MOBILE ? `<div class="cal-more" onclick="showDayPopup('${dateStr}')" style="cursor:pointer;color:var(--accent);font-weight:600">+${dayEvs.length-MAX_MOBILE} 更多</div>` : '';
           return `<div class="cal-cell ${isToday?'today':''}">
-            <div class="cal-day-num ${isToday?'cal-today-num':''}">${d}</div>
+            <div class="cal-day-num ${isToday?'cal-today-num':''}">${d}<span class="cal-mobile-weekday">(${WEEKDAYS[dt.getDay()]})</span></div>
             <div class="cal-cell-events desktop-pills">${pills}</div>
             <div class="cal-cell-events mobile-pills">${pillsMobile}${more}</div>
           </div>`;
@@ -1521,7 +1635,7 @@ function deleteDayEvent(id, dateStr) {
   showConfirm('確定要刪除此事件？', () => {
     events = events.filter(e => e.id !== id);
     save();
-    renderStats(); renderCatFilters(); renderMonthFilters(); renderContent();
+    renderAll();
     const overlay = document.getElementById('dayPopupOverlay');
     if (overlay.style.display !== 'none') showDayPopup(dateStr);
   });
@@ -1605,10 +1719,7 @@ function saveEvent() {
 
   save();
   closeModal();
-  renderStats();
-  renderCatFilters();
-  renderMonthFilters();
-  renderContent();
+  renderAll();
 }
 
 function editEvent(id) { openModal(id); }
@@ -1617,7 +1728,7 @@ function deleteEvent(id) {
   showConfirm('確定要刪除此事件？', () => {
     events = events.filter(e => e.id !== id);
     save();
-    renderStats(); renderCatFilters(); renderMonthFilters(); renderContent();
+    renderAll();
   });
 }
 
@@ -1717,11 +1828,10 @@ function syncSearch(val) {
 }
 
 // ─── Init ───
-renderStats();
-renderCatFilters();
-renderMonthFilters();
-setView(currentView);
+renderAll();
+loadFromServer();
 </script>
+
 
 
 </body></html>
